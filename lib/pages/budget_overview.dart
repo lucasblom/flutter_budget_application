@@ -2,22 +2,51 @@
 
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_budget_application/pages/adding_expenses.dart';
+import 'package:flutter_budget_application/pages/budget_settings.dart';
 
 class BudgetOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(105, 176, 155, 1),
-        title: const Align(
+        title: Align(
           alignment: Alignment.center,
-          child: Text('Budget Overview'),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              FloatingActionButton.small(
+                backgroundColor: Colors.white,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const BudgetSettings()), // Replace NewPage with your actual page class
+                  );
+                }, 
+                child: const Icon(Icons.settings)
+              ),
+              const Text('Budget Overview', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              FloatingActionButton.small(
+                backgroundColor: Colors.white,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AddingExpenses()), // Replace NewPage with your actual page class
+                  );
+                }, 
+                child: const Icon(Icons.add)
+              ),
+            ],
+          )
+          //Text('Budget Overview'),
         ),
       ),
       body: Column(
         children: <Widget>[
-          BudgetSummary(),
           BudgetHeader(),
+          BudgetSummary(),
+          const Text('Expenses', 
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
           BudgetExpenses(),
         ],
       ),
@@ -64,6 +93,7 @@ class BudgetSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 16),
       color: const Color.fromRGBO(105, 176, 155, 1),
       child: Column(
         children: <Widget>[
@@ -77,7 +107,7 @@ class BudgetSummary extends StatelessWidget {
                     sections: getSections(),
                     borderData: FlBorderData(show: false),
                     sectionsSpace: 0,
-                    centerSpaceRadius: 70, // Create space in the center
+                    centerSpaceRadius: 60, // Create space in the center
                   ),
                 ),
               ),
@@ -87,47 +117,30 @@ class BudgetSummary extends StatelessWidget {
                   const Text(
                     'CHF 1000', // Display the total budget here
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
-
+                  const SizedBox(height: 4),
                   Container(
                     width: 50,
                     height: 1,
-                    color: Colors.black, // Thin horizontal line
+                    color: const Color.fromARGB(255, 0, 0, 0), // Thin horizontal line
                   ),
-
+                  const SizedBox(height: 4),
                   const Text(
                     'CHF 500', // Display the remaining budget here
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.normal,
-                      color: Colors.white,
+                      color: Color.fromARGB(255, 255, 255, 255),
                     ),
                   ),
                 ],
               ),
             ],
           ),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Indicator(color: Colors.blue, text: 'Category A'),
-                  SizedBox(width: 8),
-                  Indicator(color: Colors.red, text: 'Category B'),
-                  SizedBox(width: 8),
-                  Indicator(color: Colors.green, text: 'Category C'),
-                  SizedBox(width: 8),
-                  Indicator(color: Colors.orange, text: 'Category D'),
-                ],
-              ),
-              ]
-          )
         ],
       ),
     );
@@ -138,7 +151,7 @@ class BudgetSummary extends StatelessWidget {
       PieChartSectionData(
         color: Colors.blue,
         value: 40,
-        title: '40%',
+        title: 'Clothing',
         radius: 40,
         titleStyle: const TextStyle(
           fontSize: 12,
@@ -149,7 +162,7 @@ class BudgetSummary extends StatelessWidget {
       PieChartSectionData(
         color: Colors.red,
         value: 30,
-        title: '30%',
+        title: 'Groceries',
         radius: 40,
         titleStyle: const TextStyle(
           fontSize: 12,
@@ -160,7 +173,7 @@ class BudgetSummary extends StatelessWidget {
       PieChartSectionData(
         color: Colors.green,
         value: 15,
-        title: '15%',
+        title: 'Transportation',
         radius: 40,
         titleStyle: const TextStyle(
           fontSize: 12,
@@ -171,7 +184,7 @@ class BudgetSummary extends StatelessWidget {
       PieChartSectionData(
         color: Colors.orange,
         value: 15,
-        title: '15%',
+        title: 'Other',
         radius: 40,
         titleStyle: const TextStyle(
           fontSize: 12,
@@ -189,32 +202,36 @@ class BudgetSummary extends StatelessWidget {
 class BudgetExpenses extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.only(top: 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16), 
-        color: const Color.fromRGBO(160, 205, 211, 1),// Round the corners
-      ),
-      child: const Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Text('Expenses', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
-              Spacer(),
-              Text('CHF 500', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Text('Category', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400)),
-            ],
-          ),
-        ],
+    return FractionallySizedBox(
+      widthFactor: 0.9, // Set width to 90% of the parent
+      child: Container(
+        margin: const EdgeInsets.only(top: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color.fromRGBO(160, 205, 211, 1),
+          borderRadius: BorderRadius.circular(12), // Add rounded corners
+        ),
+        child: const Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Text('Shoes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
+                Spacer(),
+                Text('CHF 200', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Text('Clothing', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400)),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
 
 class Indicator extends StatelessWidget {
   final Color color;
@@ -242,7 +259,7 @@ class Indicator extends StatelessWidget {
         Text(
           text,
           style: const TextStyle(
-            fontSize: 16,
+            fontSize: 12,
             fontWeight: FontWeight.bold,
           ),
         )
