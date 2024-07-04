@@ -15,9 +15,7 @@ class ExpenseService {
   }
 
 
-  Future<void> update(String name, String category, double amount) async{}
-
-
+  
   Future<void> delete(String name) async{
     _expenses.removeWhere((expense) => expense.name == name);
     return _save();

@@ -8,17 +8,18 @@ class ExpenseOverview extends ChangeNotifier {
 
   List<Expense> get expenses => _expenseService.readAll();
 
-  void addCookie(String name, String category, double amount) {
+  void addExpense(String name, String category, double amount) {
     _expenseService
     .create(Expense(name, category, amount))
     .then((_) => notifyListeners());
   }
 
-  void deleteCookie(String name) {
+  void deleteExpense(String name) {
     _expenseService
     .delete(name)
     .then((_) => notifyListeners());
   }
+
 
 
   final ExpenseService _expenseService;
