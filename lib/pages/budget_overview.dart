@@ -1,11 +1,12 @@
 // ignore_for_file: use_key_in_widget_constructors
-
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter_budget_application/pages/adding_expenses.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_budget_application/model/expense.dart';
 import 'package:flutter_budget_application/pages/budget_settings.dart';
+import 'package:flutter_budget_application/providers/budget_overview_provider.dart';
+import 'package:provider/provider.dart';
 
-class BudgetOverview extends StatelessWidget {
+class ExpenseOverviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,79 +19,129 @@ class BudgetOverview extends StatelessWidget {
               FloatingActionButton.small(
                 backgroundColor: Colors.white,
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const BudgetSettings()), // Replace NewPage with your actual page class
-                  );
-                }, 
-                child: const Icon(Icons.settings)
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const BudgetSettings()));
+                },
+                child: const Icon(Icons.settings),
               ),
-              const Text('Budget Overview', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              const Text('Expense Overview', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               FloatingActionButton.small(
                 backgroundColor: Colors.white,
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const AddingExpenses()), // Replace NewPage with your actual page class
-                  );
-                }, 
-                child: const Icon(Icons.add)
-              ),
-            ],
-          )
-          //Text('Budget Overview'),
-        ),
+                Navigator.push(context, MaterialPageRoute(builder: (context) => _ExpenseEdit()));
+              },
+              child: const Icon(Icons.add),
+              )
+            ]
+          ),
+        )
       ),
       body: Column(
-        children: <Widget>[
-          BudgetHeader(),
+        children: [
           BudgetSummary(),
-          const Text('Expenses', 
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
-          BudgetExpenses(),
+          const SizedBox(height: 16),
+          const Text("Expenses: ", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          Expanded(child: _ExpenseList()),
         ],
       ),
     );
   }
 }
 
-/// The header of the budget overview
-/// Displays the budget for the month and the remaining budget
-class BudgetHeader extends StatelessWidget {
+class _ExpenseList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      color: const Color.fromRGBO(105, 176, 155, 1),
-      child: const Column(
-        children: <Widget>[
-          Row(), // Placeholder for the Diagram
-          Row(
-            children: <Widget>[
-              Text('Budget for the Month', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              Spacer(),
-              Text('CHF 1000', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+    var expenses = Provider.of<ExpenseOverview>(context).expenses;
+
+    return ListView.builder(
+      itemCount: expenses.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
+          title: Text(expenses[index].name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
+          subtitle: Text("-   ${expenses[index].category}"),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(expenses[index].amount.toStringAsFixed(2), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () {
+                  Provider.of<ExpenseOverview>(context, listen: false)
+                      .deleteCookie(expenses[index].name);
+                },
+              ),
             ],
           ),
-          Row(
-            children: <Widget>[
-              Text('Remaining Budget', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400)),
-              Spacer(),
-              Text('CHF 500', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400)),
-            ],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
 
-/// Shows a pie diagram of the budget
-/// The diagram is a circle with a hole in the middle
-/// The hole is filled with the color of the background and the Budget is displayed in the middle
+class _ExpenseEdit extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _ExpenseEditState();
+}
+
+class _ExpenseEditState extends State<_ExpenseEdit> {
+  final _wisdomController = TextEditingController();
+  final _authorController = TextEditingController();
+  final _amountController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: _wisdomController,
+            decoration: const InputDecoration(labelText: "Name"),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: _authorController,
+            decoration: const InputDecoration(labelText: "Category"),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: _amountController,
+            decoration: const InputDecoration(labelText: "Amount"),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Provider.of<ExpenseOverview>(context, listen: false).addCookie(
+              _wisdomController.text,
+              _authorController.text,
+              double.parse(_amountController.text),
+            );
+            _wisdomController.clear();
+            _authorController.clear();
+            _amountController.clear();
+          },
+          child: const Text("Add"),
+        ),
+      ],
+    );
+  }
+}
+
 class BudgetSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var expenses = Provider.of<ExpenseOverview>(context).expenses;
+    var categoryTotals = _calculateCategoryTotals(expenses);
+    double total = 0;
+
+    for (var expense in expenses) {
+      total += expense.amount;
+    }
+
     return Container(
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 16),
@@ -104,7 +155,7 @@ class BudgetSummary extends StatelessWidget {
                 aspectRatio: 1,
                 child: PieChart(
                   PieChartData(
-                    sections: getSections(),
+                    sections: getSections(categoryTotals),
                     borderData: FlBorderData(show: false),
                     sectionsSpace: 0,
                     centerSpaceRadius: 60, // Create space in the center
@@ -114,9 +165,9 @@ class BudgetSummary extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  const Text(
-                    'CHF 1000', // Display the total budget here
-                    style: TextStyle(
+                  Text(
+                    'CHF 1000${categoryTotals != 0.0 ? '' : ''}', // Display the total budget here
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -129,9 +180,9 @@ class BudgetSummary extends StatelessWidget {
                     color: const Color.fromARGB(255, 0, 0, 0), // Thin horizontal line
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    'CHF 500', // Display the remaining budget here
-                    style: TextStyle(
+                  Text(
+                    total.toString(), // Display the remaining budget here
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.normal,
                       color: Color.fromARGB(255, 255, 255, 255),
@@ -146,92 +197,41 @@ class BudgetSummary extends StatelessWidget {
     );
   }
 
-  List<PieChartSectionData> getSections() {
-    return [
-      PieChartSectionData(
-        color: Colors.blue,
-        value: 40,
-        title: 'Clothing',
+  List<PieChartSectionData> getSections(Map<String, double> categoryTotals) {
+    List<Color> colors = [Colors.blue, Colors.red, Colors.green, Colors.orange, Colors.purple];
+    int colorIndex = 0;
+
+    return categoryTotals.entries.map((entry) {
+      final color = colors[colorIndex % colors.length];
+      colorIndex++;
+      return PieChartSectionData(
+        color: color,
+        value: entry.value,
+        title: entry.key,
         radius: 40,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
-      ),
-      PieChartSectionData(
-        color: Colors.red,
-        value: 30,
-        title: 'Groceries',
-        radius: 40,
-        titleStyle: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
-      PieChartSectionData(
-        color: Colors.green,
-        value: 15,
-        title: 'Transportation',
-        radius: 40,
-        titleStyle: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
-      PieChartSectionData(
-        color: Colors.orange,
-        value: 15,
-        title: 'Other',
-        radius: 40,
-        titleStyle: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
-    ];
+      );
+    }).toList();
+  }
+
+  Map<String, double> _calculateCategoryTotals(List<Expense> expenses) {
+    Map<String, double> categoryTotals = {};
+
+    for (var expense in expenses) {
+      if (!categoryTotals.containsKey(expense.category)) {
+        categoryTotals[expense.category] = 0.0;
+      }
+      if (categoryTotals[expense.category] != null) {categoryTotals[expense.category] = categoryTotals[expense.category]! + expense.amount;}
+      else {categoryTotals[expense.category] = expense.amount;}
+    }
+
+    return categoryTotals;
   }
 }
-
-/// Displays each expense of the month
-/// The expenses are displayed in a list
-/// Each expense has a category and the amount
-class BudgetExpenses extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return FractionallySizedBox(
-      widthFactor: 0.9, // Set width to 90% of the parent
-      child: Container(
-        margin: const EdgeInsets.only(top: 16),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: const Color.fromRGBO(160, 205, 211, 1),
-          borderRadius: BorderRadius.circular(12), // Add rounded corners
-        ),
-        child: const Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Text('Shoes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
-                Spacer(),
-                Text('CHF 200', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Text('Clothing', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400)),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 
 class Indicator extends StatelessWidget {
   final Color color;
