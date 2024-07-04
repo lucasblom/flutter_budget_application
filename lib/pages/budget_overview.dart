@@ -2,8 +2,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_budget_application/model/expense.dart';
+import 'package:flutter_budget_application/pages/adding_expenses.dart';
 import 'package:flutter_budget_application/pages/budget_settings.dart';
 import 'package:flutter_budget_application/providers/budget_overview_provider.dart';
+import 'package:flutter_budget_application/providers/budget_provider.dart';
 import 'package:provider/provider.dart';
 
 class ExpenseOverviewPage extends StatelessWidget {
@@ -19,7 +21,7 @@ class ExpenseOverviewPage extends StatelessWidget {
               FloatingActionButton.small(
                 backgroundColor: Colors.white,
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const BudgetSettings()));
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext) => BudgetSettings()));
                 },
                 child: const Icon(Icons.settings),
               ),
@@ -27,7 +29,7 @@ class ExpenseOverviewPage extends StatelessWidget {
               FloatingActionButton.small(
                 backgroundColor: Colors.white,
                 onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => _ExpenseEdit()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>  AddingExpenses()));
               },
               child: const Icon(Icons.add),
               )
@@ -67,7 +69,7 @@ class _ExpenseList extends StatelessWidget {
                 icon: const Icon(Icons.delete),
                 onPressed: () {
                   Provider.of<ExpenseOverview>(context, listen: false)
-                      .deleteCookie(expenses[index].name);
+                      .deleteExpense(expenses[index].name);
                 },
               ),
             ],
@@ -115,7 +117,7 @@ class _ExpenseEditState extends State<_ExpenseEdit> {
         ),
         ElevatedButton(
           onPressed: () {
-            Provider.of<ExpenseOverview>(context, listen: false).addCookie(
+            Provider.of<ExpenseOverview>(context, listen: false).addExpense(
               _wisdomController.text,
               _authorController.text,
               double.parse(_amountController.text),
@@ -134,6 +136,7 @@ class _ExpenseEditState extends State<_ExpenseEdit> {
 class BudgetSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var budget = Provider.of<BudgetProvider>(context).budget;
     var expenses = Provider.of<ExpenseOverview>(context).expenses;
     var categoryTotals = _calculateCategoryTotals(expenses);
     double total = 0;
@@ -166,7 +169,7 @@ class BudgetSummary extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'CHF 1000${categoryTotals != 0.0 ? '' : ''}', // Display the total budget here
+                    budget.toString(), // Display the budget here
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
