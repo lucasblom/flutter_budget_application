@@ -1,13 +1,25 @@
-/// This class is used to create an object of type Expense
-class Expense{
-  Expense(this._name, this._category, this._amount); 
+class Expense {
+  final String name;
+  final String category;
+  final double amount;
 
-  String get name => _name;
-  String get category => _category;
-  double get amount => _amount;
+  Expense(this.name, this.category, this.amount);
 
+  // Create an Expense from a JSON object
+  factory Expense.fromJson(Map<String, dynamic> json) {
+    return Expense(
+      json['name'] as String,
+      json['category'] as String,
+      json['amount'] as double,
+    );
+  }
 
-  final String _name;
-  final String _category;
-  final double _amount;
+  // Convert an Expense to a JSON object
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'category': category,
+      'amount': amount,
+    };
+  }
 }

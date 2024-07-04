@@ -18,21 +18,13 @@ class ExpenseOverviewPage extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              FloatingActionButton.small(
-                backgroundColor: Colors.white,
+              IconButton(
+                icon: const Icon(Icons.settings),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext) => BudgetSettings()));
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => BudgetSettings()));
                 },
-                child: const Icon(Icons.settings),
               ),
               const Text('Expense Overview', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              FloatingActionButton.small(
-                backgroundColor: Colors.white,
-                onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>  AddingExpenses()));
-              },
-              child: const Icon(Icons.add),
-              )
             ]
           ),
         )
@@ -41,7 +33,23 @@ class ExpenseOverviewPage extends StatelessWidget {
         children: [
           BudgetSummary(),
           const SizedBox(height: 16),
-          const Text("Expenses: ", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+            const Text("   Expenses: ", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)), // DO NOT TOUCH THIS LINE "   " are !IMPORTANT
+            IconButton(
+                icon: const Icon(Icons.add),
+                padding: const EdgeInsets.only(right: 10),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const AddingExpenses(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
           const SizedBox(height: 16),
           Expanded(child: _ExpenseList()),
         ],
@@ -140,15 +148,72 @@ class BudgetSummary extends StatelessWidget {
     var expenses = Provider.of<ExpenseOverview>(context).expenses;
     var categoryTotals = _calculateCategoryTotals(expenses);
     double total = 0;
+    var bg_green = const Color.fromRGBO(105, 176, 155, 1);
+    var bg_red = Color.fromARGB(255, 175, 86, 86);
 
     for (var expense in expenses) {
       total += expense.amount;
+    }
+    if (budget <= total) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.only(bottom: 16),
+        color: bg_red,
+        child: Column(
+          children: <Widget>[
+            Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: PieChart(
+                    PieChartData(
+                      sections: getSections(categoryTotals),
+                      borderData: FlBorderData(show: false),
+                      sectionsSpace: 0,
+                      centerSpaceRadius: 60, // Create space in the center
+                    ),
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      budget.toString(), // Display the budget here
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      width: 50,
+                      height: 1,
+                      color: const Color.fromARGB(255, 0, 0, 0), // Thin horizontal line
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      total.toString(), // Display the remaining budget here
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
     }
 
     return Container(
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 16),
-      color: const Color.fromRGBO(105, 176, 155, 1),
+      color: bg_green,
       child: Column(
         children: <Widget>[
           Stack(

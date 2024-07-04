@@ -1,12 +1,33 @@
-
-import 'package:flutter_budget_application/model/budget.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../model/budget.dart';
 
 class BudgetService {
+  static const String _prefsKey = 'budget';
 
-  Future<void> updateBudget(double budget) async {
-    _budget = budget;
+  Future<void> updateBudget(double amount) async {
+    _budget = Budget(amount);
+    await _save();
   }
 
-  double _budget = 1000;
-}
+  Budget get budget => _budget;
 
+  Future<void> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString(_prefsKey);
+    if (jsonString != null) {
+      final Map<String, dynamic> json = jsonDecode(jsonString);
+      _budget = Budget.fromJson(json);
+    } else {
+      _budget = Budget(1000); // Default value if no budget is saved
+    }
+  }
+
+  Future<void> _save() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = jsonEncode(_budget.toJson());
+    await prefs.setString(_prefsKey, jsonString);
+  }
+
+  late Budget _budget;
+}

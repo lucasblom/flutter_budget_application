@@ -1,17 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_budget_application/services/budget_service.dart';
 
 class BudgetProvider extends ChangeNotifier {
-  double _budget = 0;
+  final BudgetService _budgetService = BudgetService();
+  double _budget = 69.69;
 
   double get budget => _budget;
 
-  void setBudget(double budget) {
-    _budget = budget;
+  BudgetProvider() {
+    _loadBudget();
+  }
+
+  Future<void> _loadBudget() async {
+    await _budgetService.load();
+    _budget = _budgetService.budget.amount;
     notifyListeners();
   }
 
-  void resetBudget() {
-    _budget = 0;
+  Future<void> setBudget(double budget) async {
+    _budget = budget;
+    await _budgetService.updateBudget(budget);
+    notifyListeners();
+  }
+
+  Future<void> resetBudget() async {
+    _budget = 69;
+    await _budgetService.updateBudget(_budget);
     notifyListeners();
   }
 }

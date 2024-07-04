@@ -11,30 +11,7 @@ class BudgetSettings extends StatelessWidget {
     return Scaffold(
 
       appBar: AppBar(
-        title: Align(
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              FloatingActionButton.small(
-                backgroundColor: Colors.white,
-                onPressed: () {
-                  // ignore: avoid_types_as_parameter_names, non_constant_identifier_names
-                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext) => BudgetSettings())); 
-                },
-                child: const Icon(Icons.settings),
-              ),
-              const Text('Budget Settings', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              FloatingActionButton.small(
-                backgroundColor: Colors.white,
-                onPressed: () {
-                  // ignore: avoid_types_as_parameter_names, non_constant_identifier_names
-                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext) => ExpenseOverviewPage())); 
-                },
-                child: const Icon(Icons.arrow_forward_ios_rounded),
-              ),],
-          ),
-        ) 
+        title: const Text("Budget Settings"),
       ),
       body: Column(
         children: [
