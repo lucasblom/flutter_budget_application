@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_budget_application/pages/budget_overview.dart';
+import 'package:flutter_budget_application/pages/budget_settings.dart';
 import 'package:flutter_budget_application/providers/budget_overview_provider.dart';
+import 'package:flutter_budget_application/providers/budget_provider.dart';
 import 'package:flutter_budget_application/services/expense_service.dart';
 import 'package:provider/provider.dart';
 
@@ -9,10 +10,12 @@ void main() async {
   ExpenseService service = ExpenseService();
   await service.load();
   var expensesOverview = ExpenseOverview(service);
+  var budgetProvider = BudgetProvider();
 
  runApp(MultiProvider(
   providers: [
     ChangeNotifierProvider(create: (_) => expensesOverview),
+    ChangeNotifierProvider(create: (_) => budgetProvider),
     ], 
   child: const ExpensesApp(),
   ),
@@ -31,7 +34,7 @@ class ExpensesApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: ExpenseOverviewPage()// CookieOfTheDayPage(),
+      home: BudgetSettings()// CookieOfTheDayPage(),
     );
   }
 }
