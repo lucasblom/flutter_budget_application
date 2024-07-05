@@ -3,7 +3,7 @@ import 'package:flutter_budget_application/services/budget_service.dart';
 
 class BudgetProvider extends ChangeNotifier {
   final BudgetService _budgetService = BudgetService();
-  double _budget = 69.69;
+  double _budget = 1000;
 
   double get budget => _budget;
 
@@ -24,7 +24,7 @@ class BudgetProvider extends ChangeNotifier {
   }
 
   Future<void> resetBudget() async {
-    _budget = 69;
+    _budget = 200;
     await _budgetService.updateBudget(_budget);
     notifyListeners();
   }
