@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_budget_application/model/budget.dart';
 import 'package:flutter_budget_application/pages/budget_overview.dart';
 import 'package:flutter_budget_application/providers/budget_overview_provider.dart';
 import 'package:flutter_budget_application/providers/budget_provider.dart';
@@ -8,12 +8,17 @@ import 'package:flutter_budget_application/services/expense_service.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
   final budgetService = BudgetService();
-  await budgetService.load(); // Load the budget from SharedPreferences
+  await budgetService.load();
   ExpenseService service = ExpenseService();
   await service.load();
   var expensesOverview = ExpenseOverview(service);
   var budgetProvider = BudgetProvider();
+  //var sharedPrefrences = await SharedPreferences.getInstance();
+
+  
 
  runApp(MultiProvider(
   providers: [
