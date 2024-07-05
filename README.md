@@ -1,16 +1,25 @@
-# flutter_budget_application
+# Flutter Budget Application
 
-A new Flutter project.
+This project is a budget management application built using Flutter. It allows users to set budgets and trackexpenses. Furthermore their spending will be analized and visualized with a diagram.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Set monthly budgets
+- Track expenses
+- Categorize transactions
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Installation
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Clone the repository: `git clone https://github.com/lucasblom/flutter_budget_application`
+2. Navigate to the project directory: `cd flutter-budget-application`
+3. Install dependencies: `flutter pub get`
+4. Run the application: `flutter run`
+
+## Usage
+
+1. Run application
+2. Add your expenses.
+3. Set monthly budgets.
+4. Monitor your spending.
+
