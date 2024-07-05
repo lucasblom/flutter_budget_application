@@ -27,7 +27,8 @@ class BudgetService {
       final Map<String, dynamic> json = jsonDecode(jsonString);
       _budget = Budget.fromJson(json);
     } else {
-      _budget = Budget(1000); // Default value if no budget is saved
+      // !Default value if no budget is saved
+      _budget = Budget(1000); 
     }
   }
 
