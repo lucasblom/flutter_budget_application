@@ -161,8 +161,6 @@ class BudgetSummary extends StatelessWidget {
           //TorchLight.enableTorch();
           Vibration.vibrate(duration: 500);
           Future.delayed(const Duration(milliseconds: 500));
-          //TorchLight.disableTorch();
-          Future.delayed(const Duration(milliseconds: 500));
         }
       }
     }
