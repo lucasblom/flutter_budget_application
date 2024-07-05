@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_budget_application/pages/budget_overview.dart';
 import 'package:flutter_budget_application/providers/budget_provider.dart';
 import 'package:provider/provider.dart';
 
 class BudgetSettings extends StatelessWidget {
+  const BudgetSettings({super.key});
+
   
   @override
   Widget build(BuildContext context) {

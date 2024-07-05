@@ -43,9 +43,7 @@ class ExpenseService {
 }
 
 List<Expense> _fakeExpenseData = [
-  Expense("Shoes", "Clothing", 200),
-  Expense("Food", "Groceries", 250),
-  Expense("Train Ticket", "Transportation", 50),
+  Expense("Example Expense", "Example Category", 200.00),
 ];
 
 // Assuming Expense class has toJson and fromJson methods.

@@ -5,6 +5,14 @@ import '../model/budget.dart';
 class BudgetService {
   static const String _prefsKey = 'budget';
 
+  BudgetService() {
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    await load();
+  }
+
   Future<void> updateBudget(double amount) async {
     _budget = Budget(amount);
     await _save();
@@ -13,7 +21,7 @@ class BudgetService {
   Budget get budget => _budget;
 
   Future<void> load() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance(); //!AHHHHHHHHHHHHHHHH
     final jsonString = prefs.getString(_prefsKey);
     if (jsonString != null) {
       final Map<String, dynamic> json = jsonDecode(jsonString);
