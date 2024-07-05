@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_budget_application/model/budget.dart';
 import 'package:flutter_budget_application/pages/budget_overview.dart';
 import 'package:flutter_budget_application/providers/budget_overview_provider.dart';
 import 'package:flutter_budget_application/providers/budget_provider.dart';
 import 'package:flutter_budget_application/services/budget_service.dart';
 import 'package:flutter_budget_application/services/expense_service.dart';
 import 'package:provider/provider.dart';
+
+/// Name: MoneyMap
 
 void main() async {
 
