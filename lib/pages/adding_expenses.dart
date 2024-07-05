@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_budget_application/pages/budget_overview.dart';
-import 'package:flutter_budget_application/pages/budget_settings.dart';
 import 'package:flutter_budget_application/providers/budget_overview_provider.dart';
 import 'package:provider/provider.dart';
 
