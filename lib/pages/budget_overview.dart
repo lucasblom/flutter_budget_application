@@ -7,6 +7,8 @@ import 'package:flutter_budget_application/pages/budget_settings.dart';
 import 'package:flutter_budget_application/providers/budget_overview_provider.dart';
 import 'package:flutter_budget_application/providers/budget_provider.dart';
 import 'package:provider/provider.dart';
+//import 'package:torch_light/torch_light.dart';
+import 'package:vibration/vibration.dart';
 
 class ExpenseOverviewPage extends StatelessWidget {
   @override
@@ -148,17 +150,27 @@ class BudgetSummary extends StatelessWidget {
     var expenses = Provider.of<ExpenseOverview>(context).expenses;
     var categoryTotals = _calculateCategoryTotals(expenses);
     double total = 0;
-    var bg_green = const Color.fromRGBO(105, 176, 155, 1);
-    var bg_red = Color.fromARGB(255, 175, 86, 86);
+    var bgGreen = const Color.fromRGBO(105, 176, 155, 1);
+    var bgRed = const Color.fromARGB(255, 175, 86, 86);
 
     for (var expense in expenses) {
       total += expense.amount;
+      if (total > budget) {
+        
+        for (var i = 0; i < 5; i++) {
+          //TorchLight.enableTorch();
+          Vibration.vibrate(duration: 500);
+          Future.delayed(const Duration(milliseconds: 500));
+          //TorchLight.disableTorch();
+          Future.delayed(const Duration(milliseconds: 500));
+        }
+      }
     }
     if (budget <= total) {
       return Container(
         padding: const EdgeInsets.all(16),
         margin: const EdgeInsets.only(bottom: 16),
-        color: bg_red,
+        color: bgRed,
         child: Column(
           children: <Widget>[
             Stack(
@@ -213,7 +225,7 @@ class BudgetSummary extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 16),
-      color: bg_green,
+      color: bgGreen,
       child: Column(
         children: <Widget>[
           Stack(
